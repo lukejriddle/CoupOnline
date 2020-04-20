@@ -1,0 +1,18 @@
+.createLobby{
+    background-color: #EEEEEE;
+    height: 90%;
+    width: 100%;
+    justify-content: flex-start;
+    border-radius: 0 0 15px 15px;
+}
+
+.createRoomButtons{
+    height: 55%;
+    width: 75%;
+    justify-content: space-between !important;
+}
+
+#copiedHighlight{
+    transition-duration: .3s;
+    border: 3px solid #00DD00;
+}

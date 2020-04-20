@@ -1,0 +1,25 @@
+.joinLobby{
+    background-color: #EEEEEE;
+    height: 90%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 0 15px 15px;
+}
+
+#joinCode{
+    font-size: 1.3vw;
+    padding: 0 5% 0 5%;
+}
+
+.joinRoomButtons{
+    height: 55%;
+    width: 75%;
+    justify-content: center !important;
+}
+
+.roomCode.err{
+    transition-duration: 500ms !important;
+    border: 3px solid red !important;
+}

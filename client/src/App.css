@@ -1,0 +1,52 @@
+html, body {
+    font-family: 'Robot', sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+#root{
+    height: 100vh;
+    width: 100vw;
+    background-color: #5d5d6a;
+}
+
+input:focus { 
+    outline: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.outerWrapper{
+    text-align: center;
+    height: 100vh;
+}
+
+.innerWrapper{
+    width: 40vw;
+    height: 60vh;
+    background-color: #3f3f3f;
+    border-radius: 15px;
+}
+
+.header{
+    height: 15%;
+    width: 100%;
+    background-color: #EEEEEE;
+    border-radius: 15px 15px 0 0;
+    color: #222222
+}
+
+.flex-row{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-column{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

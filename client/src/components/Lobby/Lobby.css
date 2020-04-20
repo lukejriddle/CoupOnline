@@ -1,0 +1,34 @@
+.lobby.contentWrapper{
+    width: 100%;
+    height: 55%;
+    justify-content: flex-end;
+}
+
+.lobby.buttonsWrapper{
+    width: 100%;
+    height: 30%;
+}
+
+.lobbyPlayers {
+    width: 90%;
+    height: 90%;
+    background-color: #EEEEEE;
+    border-radius: 8px;
+}
+
+.readyButton {
+    transition: border;
+    transition-duration: 500ms;
+    color: #222222;
+    font-size: 2.3vh;
+    cursor: pointer;
+    border: 0px solid green;
+    width: 30%;
+    height: 60%;
+    border-radius: 15px;
+}
+
+.readyButton.active {
+    transition-duration: 500ms;
+    border: 3px solid green;
+}

@@ -1,0 +1,9 @@
+.lobbyPlayerItem{
+    list-style: none;
+    padding: 0;
+}
+
+.lobbyPlayerItem.ready::before{
+    content:"• ";
+    color: green;
+}
