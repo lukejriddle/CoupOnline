@@ -4,6 +4,8 @@ const Handler = require('../game_engine/socket_handler');
 
 const Sockets = require('./lobby_sockets');
 
+var util = require('util');
+
 class Lobby {
     constructor(roomCode, io){
         this.roomCode = roomCode;
@@ -90,7 +92,9 @@ class Lobby {
         console.log('setting game');
         for(var gp of gamePlayers){
             gp.setGame(game);
+            console.log(util.inspect(gp));
         }
+
         console.log('starting game');
         game.start();
         this.broadcastStarted();

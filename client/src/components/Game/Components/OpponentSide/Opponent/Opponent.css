@@ -1,0 +1,16 @@
+.gameOpp{
+    width: 33.33%;
+    height: 50%;
+}
+
+.oppHeader{
+    height: 10%;
+    width: 100%;
+    font-size: 1.5vw;
+}
+
+.oppItems{
+    height: 90%;
+    width: 100%;
+    justify-content: space-around !important;
+}

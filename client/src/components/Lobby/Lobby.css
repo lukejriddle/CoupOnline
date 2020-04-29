@@ -12,11 +12,12 @@
 .lobbyPlayers {
     width: 90%;
     height: 90%;
-    background-color: #EEEEEE;
+    background-color: #FFFFFF;
     border-radius: 8px;
 }
 
 .readyButton {
+    background-color: #FFFFFF;
     transition: border;
     transition-duration: 500ms;
     color: #222222;
@@ -30,5 +31,5 @@
 
 .readyButton.active {
     transition-duration: 500ms;
-    border: 3px solid green;
+    border: 3px solid rgb(0, 190, 117);
 }

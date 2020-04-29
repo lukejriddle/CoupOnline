@@ -7,6 +7,7 @@
  const Deck = require('./deck');
  const Turn = require('./turn');
  const Action = require('./action');
+ const util = require('util');
 
  class Game {
     constructor(id, players){
@@ -16,31 +17,33 @@
         this.turn;
         this.i = 0; // player turn index
         this.prevTurn;
-        this.oldDeck;
-        this.oldPlayer;
     }
 
     nextTurn(action, requiresResponse){
         if(action){
-            if(!requiresResponse){
+            if(action == -1){
                 this._incIndex();
-                this.turn = new Turn(this, this.players[this.i], action);
+                this.turn = new Turn(this.players[this.i], {value: 12})
+            } else if(action.value == 6 || action.value == 10){
+                this.turn = new Turn(this.players[this.i], action);
+            } else if(!requiresResponse){
+                this._incIndex();
+                this.turn = new Turn(this.players[this.i], action);
             } else {
-                this.turn = new Turn(this, action.target, action);
+                this.turn = new Turn(action.target, action);
             }
         } else {
-            console.log("[EXCEPTION] No action. ::game.js#playerAction::");
+            console.log("[EXCEPTION] No action. ::game.js#nextTurn::");
         }
     }
 
     playerAction(action){
         if(action) {
             if(action.value == 6){
-                action.succeed();
-            }
-            else if(!action.requiresReponse){
-                action.succeed();
                 this.nextTurn(action, false);
+            }else if(!action.requiresResponse){
+                this.nextTurn(action, false);
+                action.succeed();
             } else {
                 this.nextTurn(action, true);
             }
@@ -51,51 +54,48 @@
 
     playerChallenge(player){
         if(this.turn.lastAction.challenged()){
+            let pl = this.turn.lastAction.player;
             this.turn.lastAction.fail();
-            this.playerLoseInfluence(this.turn.lastAction.player);
+            this.playerLoseInfluence(pl);
         } else {
+            if(this.turn.lastAction.value == 6) this.turn.stopTimeout();;
             this.playerLoseInfluence(player);
-        }
+        }  
     }
 
     playerLoseInfluence(player){
         this.prevTurn = this.turn;
-        this.turn = new Turn(this, player, undefined);
+        this.turn = new Turn(player, undefined);
     }
 
     playerLostCard(){
-        this.turn = prevTurn;
+        this.turn = this.prevTurn;
+        if(this.turn.lastAction.value == 6){
+            this.turn.lastAction.succeed();
+        }
     }
 
-    playerExchange(player, action){
+    playerExchange(player){
         this.oldDeck = this.deck;
-        this.oldPlayer = this.player;
+        this.oldCards = player.cards;
 
-        let card1 = this.deck.draw();
-        let card2 = this.deck.draw();
+        let card1 = this.deck.draw(1)[0];
+        let card2 = this.deck.draw(1)[0];
 
         player.addCard(card1);
         player.addCard(card2);
-        this.turn = new Turn(this, player, action, true);
+        this.turn = new Turn(player, undefined, true);
     }
 
     playerDidExchange(){
-        this.nextTurn(this.turn.lastAction, false);
-    }
-
-    revertExchange(player){
-        let index = this.players.findIndex(element => element == player);
-        this.players[index] = this.oldPlayer;
-        this.deck = this.oldDeck;
-
-        this.oldPlayer = undefined;
-        this.oldDeck = undefined;
+        this.nextTurn(-1, false);
     }
 
     playerOut(player){
         let index = this.players.findIndex(element => element == player);
         if(index > -1){
             this.players.splice(index, 1);
+            console.log('Player removed!');
         } else {
             console.log("[EXCEPTION] Player not in list. ::game.js#playerOut::");
             
@@ -105,7 +105,7 @@
     start(){
         try {
             this.deck.deal(this.players);
-            this.turn = new Turn(this, this.players[this.i], 1);
+            this.turn = new Turn(this.players[this.i], 1);
         } catch(e) {
             console.log("[EXCEPTION] Error in starting game. ::game.js#start:: \n" + e);
         }

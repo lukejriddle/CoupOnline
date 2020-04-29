@@ -64,12 +64,13 @@ class Deck {
     deal(players){
         for (let i = 0; i < 2; i++) {
             players.forEach(element => {
-                element.addCard(this.draw(1));
+                element.addCard(this.draw(1)[0]);
             });
         }
 
         players.forEach(element => {
             element.addCoins(2);
+            this.removeCoins(2);
         })
     }
 
@@ -80,6 +81,15 @@ class Deck {
      */
     addCoins(num){
         this.coins += num;
+    }
+
+    /**
+     * Removes coins from the deck
+     * 
+     * @param {int} num 
+     */
+    removeCoins(num){
+        this.coins -= num;
     }
 
     /**

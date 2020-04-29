@@ -24,13 +24,12 @@ class Turn {
      * @param {Player} player 
      * @param {Action} action 
      */
-    constructor(game, player, action, isExchange) {
-        this.game = game;
+    constructor(player, action, isExchange) {
         this.activePlayer = player;
         this.lastAction = action;
-        this.time = 45;
         this.isExchange = isExchange;
         this.availableActions = this._getAvailableResponses();
+        this.timeout;
     }
 
     /**
@@ -42,6 +41,10 @@ class Turn {
         return this.lastAction;
     }
 
+    stopTimeout(){
+        clearTimeout(this.timeout);
+    }
+
     _getAvailableResponses(){
         if(this.isExchange){
             return [-2];
@@ -51,10 +54,17 @@ class Turn {
                     return [8, 11];
                 case 7:
                     return [9, 11];
+                case 6:
+                    var self = this;
+                    this.timeout = setTimeout(function() {
+                        self.lastAction.succeed();
+                    }, 7000)
+                    return [];
                 default:
                     if(this.activePlayer.coins >= 10) return [4];
                     let res = [1, 2, 3, 5, 6, 7];
                     if(this.activePlayer.coins >= 7) res.push(4);
+                    if(this.lastAction.value == 2) res.push(10);
                     return res;
             }
         } else {

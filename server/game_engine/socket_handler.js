@@ -3,6 +3,9 @@
  * @author Luke Riddle
  */
 
+const { stringify, parse } = require('flatted');
+var util = require('util');
+
 class Handler {
     constructor(io, socket, player, room){
         this.io = io;
@@ -12,59 +15,75 @@ class Handler {
     }
 
     listen(){
+        var self = this;
+
         this.socket.on('action', function(payload){
+            payload = parse(payload);
+            console.log('got Action: ' + payload.action + payload.target + payload.card);
             try {
-                this.player.doAction(payload.action, payload.target, payload.card);
-                this.emitUpdate();
+                self.player.doAction(payload.action, payload.target, payload.card);
+                self.emitUpdate();
+                self.broadcastRequire();
             } catch(e) {
-                console.log("[EXCEPTION] doAction failed. ::socket_handler.js#listen::");
+                console.log("[EXCEPTION] doAction failed. ::socket_handler.js#listen::\n" + e);
             }
         });
 
         this.socket.on('challenge', function(payload){
+            payload = parse(payload);
             try {
-                this.player.doChallenge();
-                this.emitUpdate();
+                self.player.doChallenge();
+                self.emitUpdate();
+                self.broadcastRequire();
             } catch(e) {
-                console.log("[EXCEPTION] doChallenge failed. ::socket_handler.js#listen::");
+                console.log("[EXCEPTION] doChallenge failed. ::socket_handler.js#listen::\n" + e);
             }
         });
 
         this.socket.on('loseInfluence', function(payload){
+            payload = parse(payload);
             try {
-                this.player.loseInfluence(payload);
-                this.emitUpdate();
+                self.player.loseInfluence(payload);
+                self.emitUpdate();
+                self.broadcastRequire();
             } catch(e) {
-                console.log("[EXCEPTION] loseInfluence failed. ::socket_handler.js#listen::");
+                console.log("[EXCEPTION] loseInfluence failed. ::socket_handler.js#listen::\n" + e);
             }
         });
 
-        this.socket.on('exchangeCards', function(payload){
+        this.socket.on('exchangeCards', function(payload){  
+            payload = parse(payload);        
             try { 
-                this.player.exchangeCards(payload);
-                this.emitUpdate();
+                self.player.exchangeCards(payload);
+                self.emitUpdate();
+                self.broadcastRequire();
             } catch(e) {
                 console.log("[EXCEPTION] exchangeCards failed. ::socket_handler.js#listen::");
             }
         })
 
         this.socket.on('getUpdate', function(payload){
+            payload = parse(payload);
             try {
-                this.emitUpdate();
+                self.emitUpdate();
             } catch(e) {
-                console.log("[EXCEPTION] emitUpdate failed. ::socket_handler.js#listen::");
+                console.log("[EXCEPTION] emitUpdate failed. ::socket_handler.js#listen:: \n" + e);
             }
         })
     }
 
     emitUpdate(){
-        this.io.to(this.room).emit('gameUpdate', {
-            player: this.player,
-            otherPlayers: this.player.game.players,
-            deck: this.player.game.deck,
-            turn: this.player.game.turn
-        })
+        this.socket.emit('gameUpdate', stringify({
+                player: this.player,
+                game: this.player.game
+            })
+        )
     }
+
+    broadcastRequire(){
+        this.socket.to(this.room).emit('requireUpdate', '');
+    }
+
 }
 
 module.exports = Handler;

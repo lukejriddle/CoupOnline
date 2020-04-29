@@ -1,0 +1,10 @@
+.opponentSide{
+    height: 66vh;
+    width: 100vw;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background-image: url('./../../../../img/game_background.png');
+    background-color: #FFFFFF;
+    background-repeat: repeat;
+}

@@ -1,0 +1,11 @@
+.contentDiv{
+    height: 100%;
+    width: 20%;
+    justify-content: space-evenly !important;
+}
+
+.contentDivCenter{
+    height: 100%;
+    width: 60%;
+    justify-content: space-evenly !important;
+}

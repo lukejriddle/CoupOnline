@@ -3,7 +3,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { withRouter } from 'react-router-dom';
 
 import './CreateLobby.css';
-import socket from '../../Socket';
+import socket from '../../../Socket';
 
 
 class CreateLobby extends Component{

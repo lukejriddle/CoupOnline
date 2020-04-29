@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 import './Join.css';
 
-import CreateLobby from '../CreateLobby/CreateLobby';
-import JoinLobby from '../JoinLobby/JoinLobby';
+import CreateLobby from './CreateLobby/CreateLobby';
+import JoinLobby from './JoinLobby/JoinLobby';
 
 class Join extends Component{
     constructor(props){

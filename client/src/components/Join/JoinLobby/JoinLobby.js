@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import './JoinLobby.css';
-import socket from '../../Socket';
+import socket from '../../../Socket';
 
 class JoinLobby extends Component{
     constructor(props){

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
-import LobbyList from '../LobbyList/LobbyList'
+import LobbyList from './LobbyList/LobbyList'
 import './Lobby.css';
 import socket from '../../Socket';
 
@@ -42,9 +42,9 @@ class Lobby extends Component{
     toggleReady = (e) => {
         e.preventDefault();
 
-        this.state.isReady = !this.state.isReady;
+        let res = !this.state.isReady;
+        this.setState({ isReady: res });
 
-        var self = this;
         socket.emit('toggleReady', '', function(callback){
             if(callback !== 'success'){
                 console.log(callback);

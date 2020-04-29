@@ -6,6 +6,15 @@
 const Game = require('./game');
 const Card = require('./card');
 const Action = require('./action');
+const util = require('util');
+
+const CARDTYPES = {
+    AMBASSADOR: 1,
+    ASSASSIN: 2,
+    CAPTAIN: 3,
+    CONTESSA: 4,
+    DUKE: 5
+}
 
 /**
  * Represents a player
@@ -22,9 +31,8 @@ class Player {
         this.game = undefined;
         this.cards = [];
         this.coins = 0;
-        this.availableActions = [];
-        this.canChallenge = false;
         this.cardsFaceDown = 2;
+        this.id = this._generateId();
     }
 
     /**
@@ -59,7 +67,8 @@ class Player {
      * @param {Card} card 
      */
     removeCard(card){
-
+        let index = this.cards.findIndex(element => element == card);
+        this.cards.splice(index, 1);
     }
 
     /**
@@ -80,7 +89,7 @@ class Player {
      * @param {Card} card
      */
     loseInfluence(card){
-        let res = this.cards.find(element => card == element.value);
+        let res = this.cards.find(element => card == element.value && !element.faceUp);
 
         if(res){
             res.turnFaceUp();
@@ -99,13 +108,13 @@ class Player {
      * 
      * @param {List of Cards} cards 
      */
-    exchangeCards(cards){
+    exchangeCards(cards){     
         try {
-            let res1 = this.cards.find(element => cards[0] == element.value);
+            let res1 = this.cards.find(element => cards[0] == element.value && !element.faceUp);
             this.game.deck.addCard(res1);
             this.removeCard(res1);
 
-            let res2 = this.cards.find(element => cards[1] == element.value);
+            let res2 = this.cards.find(element => cards[1] == element.value && !element.faceUp);
             this.game.deck.addCard(res2);
             this.removeCard(res2);
 
@@ -113,7 +122,6 @@ class Player {
         } catch(e) {
             console.log("[EXCEPTION] Card exchange failed. ::player.js#exchangeCards:: " + e);
         }
-
     }
 
     /**
@@ -139,7 +147,15 @@ class Player {
      * @param {Player} target 
      * @param {int} card
      */
-    doAction(action, target, card){
+    doAction(action, tar, card){
+        let target;
+        if(tar){
+            try{
+                target = this.game.players.find(element => element.id == tar);
+            } catch(e) {
+                console.log('[EXCEPTION] Couldnt get target.\n' + e)
+            }
+        }
         var actn;
         switch (action) {
             case 1: //income
@@ -164,15 +180,15 @@ class Player {
                 actn = new Action(7, this, target, undefined, CARDTYPES.CAPTAIN, true, true);
                 break;
             case 8: // block assassination
-                actn = new Action(8, this, undefined, this.game.turn.lastAction, 
+                actn = new Action(8, this, this.game.turn.lastAction.player, this.game.turn.lastAction, 
                     CARDTYPES.CONTESSA, true, false);
                 break;
             case 9: // block steal
-                actn = new Action(9, this, undefined, this.game.turn.lastAction, 
+                actn = new Action(9, this, this.game.turn.lastAction.player, this.game.turn.lastAction, 
                     card, true, false);
                 break;
             case 10: // block foreign aid
-                actn = new Action(10, this, false, this.game.turn.lastAction,
+                actn = new Action(10, this, this.game.turn.lastAction.player, this.game.turn.lastAction,
                     CARDTYPES.DUKE, true, false);
                 break;
             case 11: // allow
@@ -197,6 +213,10 @@ class Player {
      */
     doChallenge(){
         this.game.playerChallenge(this);
+    }
+
+    _generateId(){
+        return Math.random()*1024;
     }
 
 }

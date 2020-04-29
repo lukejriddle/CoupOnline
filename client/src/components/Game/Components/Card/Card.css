@@ -1,0 +1,10 @@
+.cardImage{
+    height: 70%;
+    width: auto;
+    border-radius: 8px;
+    box-shadow: 1px 1px 6px #444444;
+}
+
+.cardImage.lost{
+    opacity: .2;
+}
