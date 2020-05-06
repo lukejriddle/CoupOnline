@@ -9,7 +9,7 @@ class Challenge extends Component {
         return(
             <div className="playerChallenge flex-row">
                 <ChallengeButton active={ this.props.lastAction && this.props.lastAction.canChallenge &&
-                    this.props.player != this.props.lastAction.player }/>
+                    this.props.player != this.props.lastAction.player && !this.props.player.isOut}/>
             </div>
         )
     }

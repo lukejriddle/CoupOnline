@@ -4,7 +4,6 @@
  */
 
 const { stringify, parse } = require('flatted');
-var util = require('util');
 
 class Handler {
     constructor(io, socket, player, room){

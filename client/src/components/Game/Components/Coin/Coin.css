@@ -1,4 +1,5 @@
 .coinImage{
-    width: 50px;
+    width: 6vh;
     height: auto;
+    overflow: hidden;
 }

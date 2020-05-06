@@ -77,7 +77,7 @@ class JoinLobby extends Component{
                     </div>
                     <div className="joinLobby flex-column">
                     <h2 className="roomCodeTitle">Room Code</h2>
-                        <input onChange={ this.updateRoomCode } className={ this.state.inputClass } id="joinCode" autoComplete="off" autoFocus={ true }></input>
+                        <input onChange={ this.updateRoomCode } className={ this.state.inputClass } spellCheck={false} id="joinCode" autoComplete="off" autoFocus={ true }></input>
                         <div className="joinRoomButtons flex-row">
                             <input type="button" onClick={ this.tryJoin } className={ this.state.buttonClass } value="Join" />
                         </div>

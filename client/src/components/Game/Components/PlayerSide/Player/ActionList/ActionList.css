@@ -1,4 +1,7 @@
 .actions{
     width: 80%;
     height: 80%;
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+    align-content: center !important;
 }

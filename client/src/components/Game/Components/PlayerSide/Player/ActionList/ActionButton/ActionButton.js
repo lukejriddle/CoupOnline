@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 
+import './ActionButton.css';
+
 class ActionButton extends Component {
     constructor(props){
         super(props);
@@ -23,6 +25,10 @@ class ActionButton extends Component {
         }
     }
 
+    onClickCard = (e) => {
+        this.props.emitAction(this.props.id, undefined, e.target.value);
+    }
+
     popoverToggle = () => {
         this.setState({ popoverOpen: !this.state.popoverOpen });
     }
@@ -30,20 +36,32 @@ class ActionButton extends Component {
     render(){
         if(this.props.id == 9){ //block steal, with what?
             return (
-                <input className="actionButton" type="button" value={ this.props.value } />
+                <div className="actionButtonPopup">
+                    <Button className="actionButton" id={"targetButton" + this.props.id} type="button">{ this.props.value }</Button>
+                    <Popover hideArrow={false} trigger="legacy" placement="top" isOpen={ this.state.popoverOpen } target={"targetButton" + this.props.id}
+                        toggle={this.popoverToggle}>
+                        <PopoverHeader>Block with...</PopoverHeader>
+                        <PopoverBody>
+                            <div className="cardButtons flex-row">
+                                <Button onClick={this.onClickCard} value={1} className="cardButton" >Ambassador</Button>
+                                <Button onClick={this.onClickCard} value={3} className="cardButton" >Captain</Button>
+                            </div>
+                        </PopoverBody>
+                    </Popover>
+                </div>
             )
         } else if(this.props.id == 4 || this.props.id == 5 || this.props.id == 7){ //needs target
             return(
-                <div className="actionButton">
-                    <Button id={"targetButton" + this.props.id} type="button">{ this.props.value }</Button>
+                <div className="actionButtonPopup">
+                    <Button className="actionButton" id={"targetButton" + this.props.id} type="button">{ this.props.value }</Button>
                     <Popover trigger="legacy" placement="top" isOpen={ this.state.popoverOpen } target={"targetButton" + this.props.id}
                         toggle={this.popoverToggle}>
                         <PopoverHeader>Select a target</PopoverHeader>
                         <PopoverBody>
-                            <div className="opponentsButtons flex-row">
+                            <div className="opponentButtons flex-row">
                                 {
                                     Object.keys(this.props.opponents).map((key) => {
-                                        if(this.props.opponents[key] !== null){
+                                        if(this.props.opponents[key] !== null && !this.props.opponents[key].isOut){
                                             return(
                                                 <Button onClick={this.onClickTarget} value={this.props.opponents[key].id} className="opponentButton" key={key} >{this.props.opponents[key].name}</Button>
                                             )

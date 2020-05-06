@@ -32,103 +32,34 @@ class Player {
         this.cards = [];
         this.coins = 0;
         this.cardsFaceDown = 2;
+        this.isOut = false;
         this.id = this._generateId();
     }
 
-    /**
-     * Associates the player with a game.
-     * 
-     * @param {Game} game 
-     */
     setGame(game){
         this.game = game;
     }
 
-    /**
-     * Adds a card to the player's hand.
-     * 
-     * @param {Card} card 
-     */
-    addCard(card){
-        try {
-            this.cards.push(card);
-        } catch(e){
-            console.log(`[EXCEPTION] ${e} ::player.js#addCard::`);
-            
-        }
+    clearCardsAndCoins(){
+        this.cards = [];
+        this.coins = 0;
+        this.cardsFaceDown = 2;
+        this.isOut = false;
     }
 
-    /**
-     * Removes card from player.
-     * 
-     * Only to be used in exchanges. Not for
-     * losing influence.
-     * 
-     * @param {Card} card 
-     */
+    addCard(card){
+        this.cards.push(card);
+    }
+
     removeCard(card){
         let index = this.cards.findIndex(element => element == card);
         this.cards.splice(index, 1);
     }
 
-    /**
-     * Adds coins to the player.
-     * 
-     * @param {int} num 
-     */
     addCoins(num){
         this.coins += num;
     }
 
-    /**
-     * Makes a player's card Face Up.
-     * 
-     * If a player has no cards face down anymore,
-     * they are out.
-     * 
-     * @param {Card} card
-     */
-    loseInfluence(card){
-        let res = this.cards.find(element => card == element.value && !element.faceUp);
-
-        if(res){
-            res.turnFaceUp();
-            this.game.playerLostCard();
-            if(--this.cardsFaceDown == 0){
-                this.game.playerOut(this);
-            }
-        } else {
-            console.log("[EXCEPTION] Not a valid card to remove. ::player.js#loseInfluence::");
-            
-        }
-    }
-
-    /**
-     * Calls game to exchange two cards.
-     * 
-     * @param {List of Cards} cards 
-     */
-    exchangeCards(cards){     
-        try {
-            let res1 = this.cards.find(element => cards[0] == element.value && !element.faceUp);
-            this.game.deck.addCard(res1);
-            this.removeCard(res1);
-
-            let res2 = this.cards.find(element => cards[1] == element.value && !element.faceUp);
-            this.game.deck.addCard(res2);
-            this.removeCard(res2);
-
-            this.game.playerDidExchange();
-        } catch(e) {
-            console.log("[EXCEPTION] Card exchange failed. ::player.js#exchangeCards:: " + e);
-        }
-    }
-
-    /**
-     * Takes coins from the player.
-     * 
-     * @param {int} num 
-     */
     loseCoins(num){
         if(num <= this.coins){
             this.coins -= num;
@@ -140,23 +71,69 @@ class Player {
         }
     }
 
-    /**
-     * Does an action.
-     * 
-     * @param {int} action 
-     * @param {Player} target 
-     * @param {int} card
-     */
+    returnCoins(num){
+        let temp = this.loseCoins(num);
+        this.game.deck.addCoins(temp);
+    }
+
+    drawCoins(num){
+        let temp = this.game.deck.removeCoins(num);
+        this.addCoins(temp);
+    }
+
+    swapCard(character){
+        let cardAdded = this.game.deck.draw(1)[0];
+        let index = this.cards.findIndex(element => element.value === character);
+        let cardRemoved = this.cards.splice(index, 1, cardAdded)[0];
+        this.game.deck.addCard(cardRemoved);
+    }
+
+    _findCardInstanceByValue(value){
+        try {
+            return this.cards.find(element => value == element.value && !element.faceUp)
+        } catch(e) {
+            console.log("[EXCEPTION] Couldn't find card. ::player.js#_findCardInstanceByValue::\n" + e);
+        }
+    }
+
+    loseInfluence(value){
+        let card = this._findCardInstanceByValue(value);
+
+        try {
+            card.turnFaceUp();
+            if(--this.cardsFaceDown == 0){
+                this.isOut = true;
+                this.returnCoins(this.coins);
+            }
+            this.game.playerLostCard();
+        } catch(e) {
+            console.log("[EXCEPTION] Not a valid card to remove. ::player.js#loseInfluence::\n" + e);
+            
+        }
+    }
+
+
+    exchangeCards(cards){     
+        try {
+            let res1 = this._findCardInstanceByValue(cards[0]);
+            this.game.deck.addCard(res1);
+            this.removeCard(res1);
+
+            let res2 = this._findCardInstanceByValue(cards[1]);
+            this.game.deck.addCard(res2);
+            this.removeCard(res2);
+
+            this.game.playerDidExchange();
+        } catch(e) {
+            console.log("[EXCEPTION] Card exchange failed. ::player.js#exchangeCards:: " + e);
+        }
+    }
+
     doAction(action, tar, card){
         let target;
-        if(tar){
-            try{
-                target = this.game.players.find(element => element.id == tar);
-            } catch(e) {
-                console.log('[EXCEPTION] Couldnt get target.\n' + e)
-            }
-        }
-        var actn;
+        if(tar) target = this._getTarget(tar);
+    
+        let actn;
         switch (action) {
             case 1: //income
                 actn = new Action(1, this, undefined, undefined, undefined, false, false);
@@ -208,15 +185,20 @@ class Player {
         
     }
 
-    /**
-     * Challenges last action.
-     */
     doChallenge(){
         this.game.playerChallenge(this);
     }
 
     _generateId(){
         return Math.random()*1024;
+    }
+
+    _getTarget(tar){
+        try{
+            return this.game.players.find(element => element.id == tar);
+        } catch(e) {
+            console.log('[EXCEPTION] Couldnt get target.\n' + e)
+        }
     }
 
 }

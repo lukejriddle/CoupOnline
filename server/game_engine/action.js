@@ -39,30 +39,25 @@ class Action {
      */
     succeed(){
         if(!this.succeeded){
+            let temp;
             switch(this.value){
                 case 1: // income
-                    this.player.addCoins(1);
-                    this.player.game.deck.removeCoins(1);
+                    this.player.drawCoins(1);
                     break;
                 case 2: // foreign aid
-                    this.player.addCoins(2);
-                    this.player.game.deck.removeCoins(2);
+                    this.player.drawCoins(2);
                     break;
                 case 3: // tax
-                    this.player.addCoins(3);
-                    this.player.game.deck.removeCoins(3);
+                    this.player.drawCoins(3);
                     break;
                 case 4: // coup
-                    this.player.loseCoins(7);
-                    this.player.game.deck.addCoins(7);
+                    this.player.returnCoins(7);
                     this.player.game.playerLoseInfluence(this.target);
                     break;
                 case 5: // assassinate
-                    //taking the players coins will be handled elsewhere
                     this.player.game.playerLoseInfluence(this.target);
                     break;
                 case 6: // exhange
-                    console.log('Exchange succeeded, going to game playerExchange.');
                     this.player.game.playerExchange(this.player, this);
                     break;
                 case 7: // steal
@@ -70,11 +65,7 @@ class Action {
                     this.player.addCoins(stolen);
                     break;
                 case 8: // block assassination
-                    this.responseTo.fail();
-                    break;
                 case 9: // block steal
-                    this.responseTo.fail();
-                    break;
                 case 10: // block foreign aid
                     this.responseTo.fail();
                     break;
@@ -95,27 +86,23 @@ class Action {
         if(this.succeeded){
             switch(this.value){
                 case 2: // foreign aid
-                    this.player.loseCoins(2);
-                    this.player.game.deck.addCoins(2);
+                    this.player.returnCoins(2);
                     break;
                 case 3: // tax
-                    this.player.loseCoins(3);
-                    this.player.game.deck.addCoins(3);
+                    this.player.returnCoins(3);
                     break;
                 case 5: // assassinate
-                    break;
-                case 7: // steal
+                    if(!this.canChallenge){
+                        let temp = this.player.game.deck.removeCoins(3);
+                        this.player.addCoins(temp);
+                    }
                     break;
                 case 6:
                     this.player.game.turn.stopTimeout();
                     this.player.game.nextTurn(-1, false);
                     break;
                 case 8: // block assassination
-                    this.responseTo.succeed();
-                    break;
                 case 9: // block steal
-                    this.responseTo.succeed();
-                    break;
                 case 10: // block foreign aid
                     this.responseTo.succeed();
                     break;
@@ -137,15 +124,11 @@ class Action {
      */
     challenged(){
         if(this.canChallenge){
-            console.log('Action challenged: ' + this.value);
-            console.log('Need card: ' + this.character);
-            console.log('Player challenged: ' + this.player.name);
-            console.log('Players cards: ' + util.inspect(this.player.cards));
             this.canChallenge = false;
             let index = this.player.cards.findIndex(element => element.value == this.character && !element.faceUp)
             if(index == -1){
                 console.log('Returning true - challenge successful');
-                if(this.value == 6) this.succeeded = true;
+                if(this.value == 6 || this.value == 5) this.succeeded = true;
                 return true;
             } else return false;
         } else {

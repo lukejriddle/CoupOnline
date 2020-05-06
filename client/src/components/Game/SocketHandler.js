@@ -20,3 +20,8 @@ export function emitLoseInfluence(val){
 export function emitExchange(vals){
     socket.emit('exchangeCards', stringify(vals));
 }
+
+export function newGame(winner){
+    console.log(winner);
+    socket.emit('startAnotherGame', winner);
+}

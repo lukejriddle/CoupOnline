@@ -4,7 +4,4 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: flex-start;
-    background-image: url('./../../../../img/game_background.png');
-    background-color: #FFFFFF;
-    background-repeat: repeat;
 }

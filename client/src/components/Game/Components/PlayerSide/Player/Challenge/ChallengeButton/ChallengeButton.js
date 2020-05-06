@@ -11,7 +11,7 @@ class ChallengeButton extends Component {
     render(){
         return(
             <input type="button" className={ "challengeButton " + (this.props.active ? "active" : "inactive") }
-                onClick={ this.emitChallenge } value="Challenge!"/>
+                onClick={ this.emitChallenge } value="Challenge"/>
         )
     }
 }

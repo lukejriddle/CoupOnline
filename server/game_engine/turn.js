@@ -41,6 +41,10 @@ class Turn {
         return this.lastAction;
     }
 
+    gameOver(){
+        this.availableActions = [-3];
+    }
+
     stopTimeout(){
         clearTimeout(this.timeout);
     }
@@ -62,7 +66,8 @@ class Turn {
                     return [];
                 default:
                     if(this.activePlayer.coins >= 10) return [4];
-                    let res = [1, 2, 3, 5, 6, 7];
+                    let res = [1, 2, 3, 6, 7];
+                    if(this.activePlayer.coins >= 3) res.push(5);
                     if(this.activePlayer.coins >= 7) res.push(4);
                     if(this.lastAction.value == 2) res.push(10);
                     return res;

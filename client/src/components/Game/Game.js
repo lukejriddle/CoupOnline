@@ -31,7 +31,6 @@ class Game extends Component {
         var self = this;
         socket.on('gameUpdate', function(payload){
             payload = parse(payload);
-            console.log(payload);
             let res = arrange(payload.player, payload.game.players);
             self.setState({
                 player: payload.player,
@@ -53,12 +52,7 @@ class Game extends Component {
     getUpdate = () => {
         getUpdate();
     }
-
-    emitAction = (val, target, card) => {
-        console.log('EMITTING ACTION!');
-        this.socketHandler.emitAction(val, target, card)
-    }
-
+    
     render(){
         if(this.state.hasUpdate){
             return(

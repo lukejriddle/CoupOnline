@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import ActionButton from './ActionButton/ActionButton';
-import { emitAction } from '../../../../SocketHandler';
+import { emitAction, newGame } from '../../../../SocketHandler';
 
 import './ActionList.css';
 
@@ -21,17 +21,25 @@ class ActionList extends Component {
             10: "Block Foregin Aid",
             11: "Allow"
         }
-
-        this.emitFunctions = {
-            
-        }
     }
 
     emitAction = (val, target, card) => {
         emitAction(val, target, card);
     }
 
+    newGame = () => {
+        newGame(this.props.player.game.winner.id);
+    }
+
     render(){
+        if(this.props.player.game.isOver){
+            return (
+                <div className="actions flex-row">
+                    <h3>Game over! {this.props.player.game.winner.name} wins!</h3>
+                    <input type="button" className="actionButton" value="New Game" onClick={this.newGame}/>
+                </div>
+            )
+        }
         if(this.props.player == this.props.turn.activePlayer) {
             return (
                 <div className="actions flex-row">

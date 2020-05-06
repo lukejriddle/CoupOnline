@@ -15,21 +15,16 @@ const Card = require('./card');
  */
 class Deck {
 
-    /**
-     * Constructor
-     * @class
-     */
     constructor(){
         this.cards = [];
         this.coins = 50;
         this._initCards();
+        this.shuffle();
     }
 
     /**
-     * Shuffles the cards in the deck.
-     * 
      * Uses the modern version of the Fisher-Yates
-     * shuffle algorithm. @see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+     * shuffle algorithm.
      */
     shuffle(){
         var j, x, i;
@@ -41,26 +36,10 @@ class Deck {
         }
     }
 
-    /**
-     * Draws a number of cards from the deck.
-     * 
-     * @param {int} num Number of cards to draw
-     * 
-     * @returns {Card} Card on top
-     */
     draw(num){
         return this.cards.splice(0, num);
     }
 
-    /**
-     * Deals to each player.
-     * 
-     * Deals in a realistic card-game way, giving
-     * one to each player before going back around
-     * again. Each player gets 2 cards and 2 coins.
-     * 
-     * @param {List} players 
-     */
     deal(players){
         for (let i = 0; i < 2; i++) {
             players.forEach(element => {
@@ -69,44 +48,30 @@ class Deck {
         }
 
         players.forEach(element => {
-            element.addCoins(2);
-            this.removeCoins(2);
+            element.drawCoins(2);
         })
     }
 
-    /**
-     * Adds coins to the deck
-     * 
-     * @param {int} num 
-     */
     addCoins(num){
         this.coins += num;
     }
 
-    /**
-     * Removes coins from the deck
-     * 
-     * @param {int} num 
-     */
     removeCoins(num){
-        this.coins -= num;
+        if(num <= this.coins){
+            this.coins -= num;
+            return num;
+        } else {
+            let temp = this.coins;
+            this.coins = 0;
+            return temp;
+        }
     }
 
-    /**
-     * Adds a card to the deck and shuffles it.
-     * 
-     * @param {Card} card 
-     */
     addCard(card){
         this.cards.push(card);
         this.shuffle();
     }
 
-    /**
-     * Initializes the cards in the deck.
-     * 
-     * Two cards of each type are added to the deck and shuffled.
-     */
     _initCards(){
         console.log('init cards');
         for (let i = 1; i <= 5; i++) {
@@ -114,7 +79,6 @@ class Deck {
                 this.cards.push(new Card(i))
             }
         }
-        this.shuffle();  
     }
 }
 

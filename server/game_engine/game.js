@@ -3,23 +3,27 @@
  * @author Luke Riddle
  */
 
- const Player = require('./player');
  const Deck = require('./deck');
  const Turn = require('./turn');
- const Action = require('./action');
- const util = require('util');
 
  class Game {
-    constructor(id, players){
+    constructor(id, players, winner){
         this.id = id;
         this.players = players;
         this.deck = new Deck();
         this.turn;
-        this.i = 0; // player turn index
+        this.i = this._getFirstPlayer(winner); // player turn index
         this.prevTurn;
+        this.isOver = false;
+        this.winner;
     }
 
     nextTurn(action, requiresResponse){
+        if(this._checkGameOver()){
+            this.turn.gameOver();
+            return;
+        }
+
         if(action){
             if(action == -1){
                 this._incIndex();
@@ -41,10 +45,13 @@
         if(action) {
             if(action.value == 6){
                 this.nextTurn(action, false);
-            }else if(!action.requiresResponse){
+            } else if(!action.requiresResponse){
                 this.nextTurn(action, false);
                 action.succeed();
             } else {
+                if(action.value == 5){
+                    action.player.returnCoins(3);
+                }
                 this.nextTurn(action, true);
             }
         } else {
@@ -56,22 +63,32 @@
         if(this.turn.lastAction.challenged()){
             let pl = this.turn.lastAction.player;
             this.turn.lastAction.fail();
+            if(this.turn.lastAction && (this.turn.lastAction.value == 5 || this.turn.lastAction.value == 7)){
+                this.nextTurn(-1, false);
+            }
             this.playerLoseInfluence(pl);
         } else {
-            if(this.turn.lastAction.value == 6) this.turn.stopTimeout();;
+            if(this.turn.lastAction.value == 6) this.turn.stopTimeout();
+            this.turn.lastAction.player.swapCard(this.turn.lastAction.character);
             this.playerLoseInfluence(player);
         }  
     }
 
-    playerLoseInfluence(player){
+    playerLoseInfluence(player){     
+        let index = this.players.findIndex(element => element.id === player.id);
+        if(index == -1) return;
         this.prevTurn = this.turn;
         this.turn = new Turn(player, undefined);
     }
 
     playerLostCard(){
+        let pl = this.turn.activePlayer;
         this.turn = this.prevTurn;
-        if(this.turn.lastAction.value == 6){
+        if(this.turn.lastAction && this.turn.lastAction.value == 6){
             this.turn.lastAction.succeed();
+        }
+        if(pl.isOut){
+            this.nextTurn(-1, false);
         }
     }
 
@@ -91,17 +108,6 @@
         this.nextTurn(-1, false);
     }
 
-    playerOut(player){
-        let index = this.players.findIndex(element => element == player);
-        if(index > -1){
-            this.players.splice(index, 1);
-            console.log('Player removed!');
-        } else {
-            console.log("[EXCEPTION] Player not in list. ::game.js#playerOut::");
-            
-        }
-    }
-
     start(){
         try {
             this.deck.deal(this.players);
@@ -111,12 +117,36 @@
         }
     }
 
+    _getFirstPlayer(winner){
+        if(!winner) return 0;
+        else {
+            return this.players.findIndex(element => element.id == winner);
+        }
+    }
+
     _incIndex(){
         if(this.i == this.players.length - 1){
             this.i = 0;
         } else {
             this.i++;
         }
+
+        if(this.players[this.i].isOut) this._incIndex();
+    }
+
+    _checkGameOver(){
+        let count = 0;
+        let winner;
+        for(let pl of this.players){
+            if(pl.isOut) count++;
+            else winner = pl;
+        }
+        if(count == 1){
+            this.isOver = true;
+            this.winner = winner;
+            return true;
+        }
+        return false;
     }
  }
 

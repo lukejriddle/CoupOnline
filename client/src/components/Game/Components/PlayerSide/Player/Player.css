@@ -1,16 +1,12 @@
 .gamePlayer{
     height: 100%;
     justify-content: flex-start !important;
-    box-shadow: 0 -5px 16px #999999;
-    background-image: url('./../../../../../img/background.png');
-    background-color: #FFFFFF;
-    background-repeat: repeat;
 }
 
 .playerActions{
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    width: 30%;
+    width: 25%;
     height: 100%;
 }
