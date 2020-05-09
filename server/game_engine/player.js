@@ -3,18 +3,7 @@
  * @author Luke Riddle
  */
 
-const Game = require('./game');
-const Card = require('./card');
-const Action = require('./action');
-const util = require('util');
-
-const CARDTYPES = {
-    AMBASSADOR: 1,
-    ASSASSIN: 2,
-    CAPTAIN: 3,
-    CONTESSA: 4,
-    DUKE: 5
-}
+const ActionFactory = require('./actions/ActionFactory');
 
 /**
  * Represents a player
@@ -47,6 +36,17 @@ class Player {
         this.isOut = false;
     }
 
+    drawCards(num){
+        let newCards = this.game.deck.draw(2);
+        this.addCards(newCards);
+    }
+
+    addCards(cards){
+        for(let card of cards){
+            this.addCard(card);
+        }
+    }
+
     addCard(card){
         this.cards.push(card);
     }
@@ -56,8 +56,19 @@ class Player {
         this.cards.splice(index, 1);
     }
 
+    drawCoins(num){
+        let temp = this.game.deck.removeCoins(num);
+        this.addCoins(temp);
+    }
+
     addCoins(num){
         this.coins += num;
+    }
+
+
+    returnCoinsToDeck(num){
+        let temp = this.loseCoins(num);
+        this.game.deck.addCoins(temp);
     }
 
     loseCoins(num){
@@ -71,16 +82,6 @@ class Player {
         }
     }
 
-    returnCoins(num){
-        let temp = this.loseCoins(num);
-        this.game.deck.addCoins(temp);
-    }
-
-    drawCoins(num){
-        let temp = this.game.deck.removeCoins(num);
-        this.addCoins(temp);
-    }
-
     swapCard(character){
         let cardAdded = this.game.deck.draw(1)[0];
         let index = this.cards.findIndex(element => element.value === character);
@@ -88,16 +89,16 @@ class Player {
         this.game.deck.addCard(cardRemoved);
     }
 
-    _findCardInstanceByValue(value){
+    findCardInstanceByValue(value){
         try {
             return this.cards.find(element => value == element.value && !element.faceUp)
         } catch(e) {
-            console.log("[EXCEPTION] Couldn't find card. ::player.js#_findCardInstanceByValue::\n" + e);
+            console.log("[EXCEPTION] Couldn't find card. ::player.js#findCardInstanceByValue::\n" + e);
         }
     }
 
     loseInfluence(value){
-        let card = this._findCardInstanceByValue(value);
+        let card = this.findCardInstanceByValue(value);
 
         try {
             card.turnFaceUp();
@@ -105,7 +106,6 @@ class Player {
                 this.isOut = true;
                 this.returnCoins(this.coins);
             }
-            this.game.playerLostCard();
         } catch(e) {
             console.log("[EXCEPTION] Not a valid card to remove. ::player.js#loseInfluence::\n" + e);
             
@@ -115,11 +115,11 @@ class Player {
 
     exchangeCards(cards){     
         try {
-            let res1 = this._findCardInstanceByValue(cards[0]);
+            let res1 = this.findCardInstanceByValue(cards[0]);
             this.game.deck.addCard(res1);
             this.removeCard(res1);
 
-            let res2 = this._findCardInstanceByValue(cards[1]);
+            let res2 = this.findCardInstanceByValue(cards[1]);
             this.game.deck.addCard(res2);
             this.removeCard(res2);
 
@@ -129,59 +129,13 @@ class Player {
         }
     }
 
-    doAction(action, tar, card){
-        let target;
-        if(tar) target = this._getTarget(tar);
-    
-        let actn;
-        switch (action) {
-            case 1: //income
-                actn = new Action(1, this, undefined, undefined, undefined, false, false);
-                break;
-            case 2: //foreign aid
-                actn = new Action(2, this, undefined, undefined, undefined, false, false);
-                break;
-            case 3: // tax
-                actn = new Action(3, this, undefined, undefined, CARDTYPES.DUKE, true, false);
-                break;
-            case 4: // coup
-                actn = new Action(4, this, target, undefined, undefined, false, false);
-                break;
-            case 5: // assassinate
-                actn = new Action(5, this, target, undefined, CARDTYPES.ASSASSIN, true, true);
-                break;
-            case 6: // exchange
-                actn = new Action(6, this, undefined, undefined, CARDTYPES.AMBASSADOR, true, false);
-                break;
-            case 7: // steal
-                actn = new Action(7, this, target, undefined, CARDTYPES.CAPTAIN, true, true);
-                break;
-            case 8: // block assassination
-                actn = new Action(8, this, this.game.turn.lastAction.player, this.game.turn.lastAction, 
-                    CARDTYPES.CONTESSA, true, false);
-                break;
-            case 9: // block steal
-                actn = new Action(9, this, this.game.turn.lastAction.player, this.game.turn.lastAction, 
-                    card, true, false);
-                break;
-            case 10: // block foreign aid
-                actn = new Action(10, this, this.game.turn.lastAction.player, this.game.turn.lastAction,
-                    CARDTYPES.DUKE, true, false);
-                break;
-            case 11: // allow
-                actn = new Action(11, this, undefined, this.game.turn.lastAction,
-                    undefined, false, false);
-                break;
-            default:
-                break;
+    doAction(value, targetOrCard){
+        if(targetOrCard > 5){
+            targetOrCard = this._getTarget(targetOrCard)
         }
+        let action = ActionFactory.create(value, this, targetOrCard);
 
-        if(actn){
-            this.game.playerAction(actn);
-        } else {
-            console.log("[EXCEPTION] Not a valid action. ::player.js#doAction::");
-            
-        }
+        action.execute();
         
     }
 

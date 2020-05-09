@@ -15,12 +15,12 @@ class Handler {
 
     listen(){
         var self = this;
-
+        
         this.socket.on('action', function(payload){
+            console.log('received action');
             payload = parse(payload);
-            console.log('got Action: ' + payload.action + payload.target + payload.card);
             try {
-                self.player.doAction(payload.action, payload.target, payload.card);
+                self.player.doAction(payload.action, payload.targetOrCard);
                 self.emitUpdate();
                 self.broadcastRequire();
             } catch(e) {
@@ -43,6 +43,7 @@ class Handler {
             payload = parse(payload);
             try {
                 self.player.loseInfluence(payload);
+                self.player.game.playerLostCard(self.player);
                 self.emitUpdate();
                 self.broadcastRequire();
             } catch(e) {

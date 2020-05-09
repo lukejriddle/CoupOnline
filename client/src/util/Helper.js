@@ -30,7 +30,7 @@ export function setUpBoard(others){
  * @returns {List} arranged list
  */
 export function arrange(player, otherPlayers){
-    let index = otherPlayers.findIndex(element => element == player);
+    let index = otherPlayers.findIndex(element => element === player);
     let temp = otherPlayers.splice(index, otherPlayers.length - index);
     let res = temp.concat(otherPlayers);
     res.shift();

@@ -55,7 +55,7 @@ class Lobby {
         var index = this._findPlayerIndex(socketId);
         this.players[index].isReady = !this.players[index].isReady;
         
-        if(_allPlayersAreReady()){
+        if(this._allPlayersAreReady()){
             this.initGame();
         }
     }

@@ -21,7 +21,7 @@ class Card extends Component {
     }
 
     componentDidUpdate = () => {
-        if(this.state.isSelected && this.props.numSelected == 0){
+        if(this.state.isSelected && this.props.numSelected === 0){
             this.setState({isSelected: false});
         }
     }

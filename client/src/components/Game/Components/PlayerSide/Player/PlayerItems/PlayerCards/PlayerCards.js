@@ -17,7 +17,7 @@ class PlayerCards extends Component {
     select = (val) => {
         this.state.selected.push(val);
         this.setState({ numSelected: ++this.state.numSelected});
-        if(this.state.numSelected == 2){
+        if(this.state.numSelected === 2){
             try{
                 this.emitExchange(this.state.selected);
                 this.setState({numSelected: 0, selected: [] });
@@ -28,7 +28,7 @@ class PlayerCards extends Component {
     }
 
     deselect = (val) => {
-        let index = this.state.selected.findIndex(element => element == val);
+        let index = this.state.selected.findIndex(element => element === val);
         this.state.selected.splice(index, 1);
         this.setState({ numSelected: --this.state.numSelected})
     }
@@ -47,7 +47,7 @@ class PlayerCards extends Component {
                 {
                     Object.keys(this.props.player.cards).map((key) => {
                         return (
-                            <Card isPlayer={true} isPlayersTurn={ this.props.turn.activePlayer == this.props.player }
+                            <Card isPlayer={true} isPlayersTurn={ this.props.turn.activePlayer === this.props.player }
                             availableActions={ this.props.turn.availableActions }
                             key={ key } card={ this.props.player.cards[key] }
                             emitLoseInfluence={ this.emitLoseInfluence }

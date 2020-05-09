@@ -5,8 +5,8 @@ export function getUpdate(){
     socket.emit('getUpdate', stringify(''));
 }
 
-export function emitAction(val, target, card){
-    socket.emit('action', stringify({action: val, target: target, card: card}));
+export function emitAction(val, targetOrCard){
+    socket.emit('action', stringify({action: val, targetOrCard: targetOrCard}));
 }
 
 export function emitChallenge(){

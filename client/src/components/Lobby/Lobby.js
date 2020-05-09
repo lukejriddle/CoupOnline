@@ -67,7 +67,7 @@ class Lobby extends Component{
                     </div>
                     <div className="lobby buttonsWrapper flex-column">
                         <input type="button" onClick={ this.toggleReady } 
-                            className={ this.state.buttonClass + " " + (this.state.players.length == 1 ? "btnDisabled" : "") + " " + (this.state.isReady ? "active" : "") } value="Ready" />
+                            className={ this.state.buttonClass + " " + (this.state.players.length === 1 ? "btnDisabled" : "") + " " + (this.state.isReady ? "active" : "") } value="Ready" />
                     </div>
                 </div>
             </div>

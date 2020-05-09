@@ -26,7 +26,7 @@ class JoinLobby extends Component{
         socket.emit('tryJoin', 
         self.state.roomCode, 
         function(callback) {
-            if(callback == 'err'){
+            if(callback === 'err'){
                 console.log('Failed to join lobby.');
                 self.updateInput();
             } else {
@@ -41,7 +41,7 @@ class JoinLobby extends Component{
         { roomCode: self.state.roomCode, username: self.props.username }, 
         function(callback) {
             console.log(callback);
-            if(callback != 'err'){
+            if(callback !== 'err'){
                 document.title = "Coup Online - " + self.state.roomCode;
                 self.props.history.push('/lobby');
                 

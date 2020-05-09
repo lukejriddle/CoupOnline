@@ -9,7 +9,7 @@ class Opponent extends Component {
     render(){
         if(this.props.player){
             return (
-                <div className="gameOpp flex-column">
+                <div className={"gameOpp flex-column " + (this.props.player === this.props.player.game.turn.activePlayer ? "activePlayer" : "")}>
                     <div className="oppHeader flex-row">
                         {this.props.player.name}
                     </div>

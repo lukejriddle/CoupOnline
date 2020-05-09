@@ -23,8 +23,8 @@ class ActionList extends Component {
         }
     }
 
-    emitAction = (val, target, card) => {
-        emitAction(val, target, card);
+    emitAction = (val, targetOrCard) => {
+        emitAction(val, targetOrCard);
     }
 
     newGame = () => {
@@ -55,7 +55,7 @@ class ActionList extends Component {
         } else if(this.props.turn.availableActions.includes(10) && this.props.player != this.props.turn.lastAction.player) {
             return (
                 <div className="actions flex-row">
-                    <ActionButton emitAction={ this.props.emitAction } key={ 10 } id={ 10 } value={ this.actions[10] } opponents={ this.props.opponents } />
+                    <ActionButton emitAction={ this.emitAction } key={ 10 } id={ 10 } value={ this.actions[10] } opponents={ this.props.opponents } />
                 </div>
             )
         }  else {

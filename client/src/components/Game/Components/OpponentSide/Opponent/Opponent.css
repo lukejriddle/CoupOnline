@@ -1,6 +1,7 @@
 .gameOpp{
     width: 33.33%;
     height: 50%;
+    transition: box-shadow;
 }
 
 .oppHeader{
@@ -13,4 +14,10 @@
     height: 90%;
     width: 100%;
     justify-content: space-around !important;
+    text-decoration: none;
+}
+
+.gameOpp.activePlayer .cardImage{
+    box-shadow: 0 0 80px 10px rgba(0, 130, 17, 0.75);
+    transition-duration: 50ms;
 }

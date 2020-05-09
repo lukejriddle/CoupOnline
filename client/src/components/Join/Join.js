@@ -45,7 +45,7 @@ class Join extends Component{
                     </div>
                     <div className="joinUsernameWrapper flex-column">
                         <h3 id="yourUsername">Your name</h3>
-                        <input maxlength={20} spellCheck={false} autoFocus={true} onChange={ this.updateUsername } type="text" className="usernameInput"/>
+                        <input maxLength={20} spellCheck={false} autoFocus={true} onChange={ this.updateUsername } type="text" className="usernameInput"/>
                     </div>
                     <div className="joinButtonsWrapper flex-row">
                         <input type="button" className= { this.state.buttonClass } value="Join Lobby" onClick={ this.toggleJoin }/>

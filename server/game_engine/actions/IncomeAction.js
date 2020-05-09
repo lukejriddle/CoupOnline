@@ -3,9 +3,12 @@ const AbstractAction = require('./AbstractAction');
 class IncomeAction extends AbstractAction{
     constructor(player){
         super(player);
-        this.value = 1;
         this.canChallenge = false;
-        this.requiresResponse = false;
+        this.message = `${this.player.name} took income!`;
+    }
+
+    succeed(){
+        this.player.drawCoins(1);
     }
 }
 

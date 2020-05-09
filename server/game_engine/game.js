@@ -4,7 +4,10 @@
  */
 
  const Deck = require('./deck');
- const Turn = require('./turn');
+ const LoseInfluenceTurn = require('./turns/LoseInfluenceTurn');
+ const ActionTurn = require('./turns/ActionTurn');
+ const util = require('util');
+
 
  class Game {
     constructor(id, players, winner){
@@ -18,120 +21,53 @@
         this.winner;
     }
 
-    nextTurn(action, requiresResponse){
-        if(this._checkGameOver()){
-            this.turn.gameOver();
-            return;
-        }
+    playerChallenge(challenger){
+        let challengee = this.turn.lastAction.player;
+        let challengeMessage;
 
-        if(action){
-            if(action == -1){
-                this._incIndex();
-                this.turn = new Turn(this.players[this.i], {value: 12})
-            } else if(action.value == 6 || action.value == 10){
-                this.turn = new Turn(this.players[this.i], action);
-            } else if(!requiresResponse){
-                this._incIndex();
-                this.turn = new Turn(this.players[this.i], action);
-            } else {
-                this.turn = new Turn(action.target, action);
-            }
-        } else {
-            console.log("[EXCEPTION] No action. ::game.js#nextTurn::");
-        }
-    }
-
-    playerAction(action){
-        if(action) {
-            if(action.value == 6){
-                this.nextTurn(action, false);
-            } else if(!action.requiresResponse){
-                this.nextTurn(action, false);
-                action.succeed();
-            } else {
-                if(action.value == 5){
-                    action.player.returnCoins(3);
-                }
-                this.nextTurn(action, true);
-            }
-        } else {
-            console.log("[EXCEPTION] No action. ::game.js#playerAction::");
-        }
-    }
-
-    playerChallenge(player){
-        if(this.turn.lastAction.challenged()){
-            let pl = this.turn.lastAction.player;
+        if(this.turn.lastAction.challenge()){
+            challengeMessage = this._generateChallengeMessage(challenger, challengee, true);
             this.turn.lastAction.fail();
-            if(this.turn.lastAction && (this.turn.lastAction.value == 5 || this.turn.lastAction.value == 7)){
-                this.nextTurn(-1, false);
-            }
-            this.playerLoseInfluence(pl);
+            this.playerLoseInfluence(challengee, challengeMessage);
         } else {
-            if(this.turn.lastAction.value == 6) this.turn.stopTimeout();
+            challengeMessage = this._generateChallengeMessage(challenger, challengee, false);
             this.turn.lastAction.player.swapCard(this.turn.lastAction.character);
-            this.playerLoseInfluence(player);
+            this.playerLoseInfluence(challenger, challengeMessage);
         }  
     }
 
-    playerLoseInfluence(player){     
-        let index = this.players.findIndex(element => element.id === player.id);
-        if(index == -1) return;
+    _generateChallengeMessage(challenger, challengee, succeeded){
+        return `${challenger.name} challenged ${challengee.name} - and ` + (succeeded ? `won!` : `lost!`);
+    }
+
+    playerLoseInfluence(player, message){     
         this.prevTurn = this.turn;
-        this.turn = new Turn(player, undefined);
+        this.nextTurn(new LoseInfluenceTurn(player, {message: message}));
     }
 
-    playerLostCard(){
+    playerLostCard(player){
         let pl = this.turn.activePlayer;
-        this.turn = this.prevTurn;
-        if(this.turn.lastAction && this.turn.lastAction.value == 6){
-            this.turn.lastAction.succeed();
-        }
+        this.nextTurn(this.prevTurn);
         if(pl.isOut){
-            this.nextTurn(-1, false);
+            this.nextTurn(new ActionTurn(this.nextPlayer(), this.turn.lastAction));
         }
+        this._appendLostCardMessage(player);
     }
 
-    playerExchange(player){
-        this.oldDeck = this.deck;
-        this.oldCards = player.cards;
-
-        let card1 = this.deck.draw(1)[0];
-        let card2 = this.deck.draw(1)[0];
-
-        player.addCard(card1);
-        player.addCard(card2);
-        this.turn = new Turn(player, undefined, true);
+    _appendLostCardMessage(player){
+        this.turn.lastAction.secondMessage = player.name + " lost a card.";
     }
 
     playerDidExchange(){
-        this.nextTurn(-1, false);
+        this.turn.lastAction.message = `${this.turn.lastAction.player.name} exchanged cards!`;
+        this.nextTurn(new ActionTurn(this.nextPlayer(), this.turn.lastAction));
     }
 
-    start(){
-        try {
-            this.deck.deal(this.players);
-            this.turn = new Turn(this.players[this.i], 1);
-        } catch(e) {
-            console.log("[EXCEPTION] Error in starting game. ::game.js#start:: \n" + e);
-        }
-    }
+    nextTurn(turn){
+        if(this._checkGameOver())
+            this._endGame();
 
-    _getFirstPlayer(winner){
-        if(!winner) return 0;
-        else {
-            return this.players.findIndex(element => element.id == winner);
-        }
-    }
-
-    _incIndex(){
-        if(this.i == this.players.length - 1){
-            this.i = 0;
-        } else {
-            this.i++;
-        }
-
-        if(this.players[this.i].isOut) this._incIndex();
+        this.turn = turn;
     }
 
     _checkGameOver(){
@@ -148,6 +84,39 @@
         }
         return false;
     }
+
+    _endGame(){
+        this.turn.gameOver();
+    }
+
+    start(){
+        try {
+            this.deck.deal(this.players);
+            this.nextTurn(new ActionTurn(this.players[this.i], 1));
+        } catch(e) {
+            console.log("[EXCEPTION] Error in starting game. ::game.js#start:: \n" + e);
+        }
+    }
+
+    _getFirstPlayer(winner){
+        if(!winner) return 0;
+        else {
+            return this.players.findIndex(element => element.id == winner);
+        }
+    }
+
+    nextPlayer(){
+        if(this.i == this.players.length - 1){
+            this.i = 0;
+        } else {
+            this.i++;
+        }
+
+        if(this.players[this.i].isOut) this.nextPlayer();
+        else return this.players[this.i];
+    }
+
+    
  }
 
  module.exports = Game;

@@ -26,7 +26,7 @@ class ActionButton extends Component {
     }
 
     onClickCard = (e) => {
-        this.props.emitAction(this.props.id, undefined, e.target.value);
+        this.props.emitAction(this.props.id, e.target.value);
     }
 
     popoverToggle = () => {
@@ -34,7 +34,7 @@ class ActionButton extends Component {
     }
 
     render(){
-        if(this.props.id == 9){ //block steal, with what?
+        if(this.props.id === 9){ //block steal, with what?
             return (
                 <div className="actionButtonPopup">
                     <Button className="actionButton" id={"targetButton" + this.props.id} type="button">{ this.props.value }</Button>
@@ -50,7 +50,7 @@ class ActionButton extends Component {
                     </Popover>
                 </div>
             )
-        } else if(this.props.id == 4 || this.props.id == 5 || this.props.id == 7){ //needs target
+        } else if(this.props.id === 4 || this.props.id === 5 || this.props.id === 7){ //needs target
             return(
                 <div className="actionButtonPopup">
                     <Button className="actionButton" id={"targetButton" + this.props.id} type="button">{ this.props.value }</Button>
@@ -74,11 +74,11 @@ class ActionButton extends Component {
                     </Popover>
                 </div>
             )
-        } else if(this.props.id == -1){
+        } else if(this.props.id === -1){
             return(
                 <h3>Select a card to lose</h3>
             )
-        } else if(this.props.id == -2){
+        } else if(this.props.id === -2){
             return(
                 <h3>Select two cards to return to the deck.</h3>
             )

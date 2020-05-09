@@ -1,6 +1,6 @@
 .challengeButton{
     width: 40%;
-    height: 30%;
+    height: 45%;
     border: none;
     transition: opacity;
     border-radius: 8px;
@@ -9,7 +9,7 @@
     border: none;
     display:inline-block;
     padding:0.7em 1.4em;
-    margin:0 0.3em 0.3em 0;
+    margin:0 0.3em 3em 0;
     border-radius:1.0em;
     box-sizing: border-box;
     text-decoration:none;
