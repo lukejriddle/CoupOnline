@@ -5,3 +5,6 @@ This project is based on the card game [Coup](https://boardgamegeek.com/boardgam
 This project was made using Node.js, Express.js, and socket.io.
 
 The front-end was made using React.js.
+
+## Screenshots
+![img](https://imgur.com/ZAUBv9p)
