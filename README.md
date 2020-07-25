@@ -7,4 +7,7 @@ This project was made using Node.js, Express.js, and socket.io.
 The front-end was made using React.js.
 
 ## Screenshots
-![img](https://imgur.com/ZAUBv9p)
+![Home Page](https://i.imgur.com/ZAUBv9p.png)
+![Another home page](https://i.imgur.com/4rRGyYO.png)
+![Create Lobby](https://i.imgur.com/RTsnZni.png)
+![Join Lobby](https://i.imgur.com/oiDBism.png)
