@@ -19,9 +19,11 @@ class StealAction extends AbstractAction {
     }
 
     fail(){
+        console.log('can Challenge is ' + this.canChallenge);
         if(!this.canChallenge){
             this.message = "";
             let nextPlayer = this.player.game.nextPlayer();
+            console.log('im here');
             this.player.game.nextTurn(new ActionTurn(nextPlayer, this));
         }
     }

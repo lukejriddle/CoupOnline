@@ -14,9 +14,9 @@ class AllowAction extends AbstractAction{
     }
 
     execute(){
-        this.succeed();
         let nextPlayer = this.player.game.nextPlayer();
         this.player.game.nextTurn(new ActionTurn(nextPlayer, this));
+        this.succeed();
     }
 }
 

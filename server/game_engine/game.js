@@ -47,10 +47,12 @@
 
     playerLostCard(player){
         let pl = this.turn.activePlayer;
+        
+        // if(pl.isOut){
+        //     this.nextTurn(new ActionTurn(this.nextPlayer(), this.turn.lastAction));
+        // } else {
         this.nextTurn(this.prevTurn);
-        if(pl.isOut){
-            this.nextTurn(new ActionTurn(this.nextPlayer(), this.turn.lastAction));
-        }
+        
         this._appendLostCardMessage(player);
     }
 
@@ -67,7 +69,11 @@
         if(this._checkGameOver())
             this._endGame();
 
-        this.turn = turn;
+        if(this.players[this.i].isOut){
+            this.nextTurn(new ActionTurn(this.nextPlayer(), this.turn.lastAction));
+        } else {
+            this.turn = turn;
+        }
     }
 
     _checkGameOver(){
@@ -77,7 +83,7 @@
             if(pl.isOut) count++;
             else winner = pl;
         }
-        if(count == 1){
+        if(count == this.players.length - 1){
             this.isOver = true;
             this.winner = winner;
             return true;
@@ -112,7 +118,7 @@
             this.i++;
         }
 
-        if(this.players[this.i].isOut) this.nextPlayer();
+        if(this.players[this.i].isOut) return this.nextPlayer();
         else return this.players[this.i];
     }
 

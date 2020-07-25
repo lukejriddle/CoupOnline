@@ -19,6 +19,7 @@ class AbstractAction {
     challenge(){
         if(this.canChallenge){
             this.canChallenge = false;
+            console.log('can Challenge is ' + this.canChallenge);
             let card = this.player.findCardInstanceByValue(this.character);
 
             return (!card ? true : false);

@@ -103,8 +103,9 @@ class Player {
         try {
             card.turnFaceUp();
             if(--this.cardsFaceDown == 0){
+                console.log('Player out');
                 this.isOut = true;
-                this.returnCoins(this.coins);
+                this.returnCoinsToDeck(this.coins);
             }
         } catch(e) {
             console.log("[EXCEPTION] Not a valid card to remove. ::player.js#loseInfluence::\n" + e);

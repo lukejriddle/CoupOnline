@@ -1,8 +1,6 @@
 const LobbySocketHandler = require('./lobby_engine/lobbySocketHandler');
 const RoomManager = require('./RoomManager');
 
-var rooms = [0,1];
-
 module.exports = function (server) {
   var io = require("socket.io")(server);
   var roomManager = new RoomManager();
